@@ -27,6 +27,9 @@ for file in filter(lambda file: file.endswith('.csv') and not file.endswith('inf
 data = pd.concat(data).reset_index(drop=True)
 data['total_runs'] = data['runs_off_bat'] + data['extras']
 
+team1 = str(input("Enter the name of the team batting first: "))
+team2 = str(input ("Enter the name of the team batting second: "))
+
 # Get user input for innings selection
 inn = int(input("Enter the innings going on right now (1 or 2): "))
 
@@ -59,7 +62,7 @@ if inn == 1:
 
     # Evaluate the model
     mse = model1.evaluate(X1_scaled, y1, verbose=0)
-    print(f"📊 Model MSE: {mse}")
+    print(f"Model MSE: {mse}")
 
     while True:
         try:
@@ -76,13 +79,13 @@ if inn == 1:
 
             # Predict final score
             prediction = model1.predict(user_input_scaled)[0][0]
-            print(f"🏏 **Predicted Final Score:** {int(prediction)}")
+            print(f"**Predicted Final for {str(team1)}: {int(prediction)}")
 
             if input("Press 'x' to exit or Enter to continue: ").lower() == 'x':
                 break
 
         except ValueError:
-            print("❌ Invalid input. Please enter numerical values.")
+            print("Invalid input. Please enter numerical values.")
 
 
 # ----------------------------------------
@@ -134,9 +137,12 @@ elif inn == 2:
             win_prob = model.predict(user_input_scaled)[0][0]
             chase_success = int(win_prob > 0.5)
 
-            print("\n🔹 **Chase Prediction Results** 🔹")
-            print(f"🔵 Probability of Successful Chase: {win_prob:.2%}")  # Format as percentage
-            print(f"⚡ Prediction: {'Chase should be successful!' if chase_success else 'Chase might fail!'}\n")
+
+            print("\n**Chase Prediction Results**")
+            print(f"Probability of {str(team2)} winning : {win_prob:.2%}")  # Format as percentage
+            print(f"Probability of {str(team1)} winning : {(1-win_prob):.2%}")  # Format as percentage
+            print()
+            print(f"**Prediction: {f"{str(team2)} should Win!" if chase_success else f"{str(team1)} should Win!"}\n")
 
             if input("Press 'x' to exit or Enter to continue: ").lower() == 'x':
                 break
