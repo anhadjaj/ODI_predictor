@@ -1,106 +1,114 @@
 # 🏏 ODI Cricket Match Prediction
+
 This project predicts match dynamics in One Day Internationals (ODIs), focusing on:
-   -First Innings Final Score Prediction using an LSTM model.
-   -Second Innings Chase Success Prediction using a neural network.
+
+- **First Innings Final Score Prediction** using an LSTM model.
+- **Second Innings Chase Success Prediction** using a neural network.
+
 The system processes ball-by-ball data and predicts match progression with high accuracy, enabling real-time strategic insights for both innings.
 
-> 📂 Dataset
-Source: Raw CSVs from cricsheet.org (structured by match)
+---
+
+## 📂 Dataset
+
+**Source:** Raw CSVs from [Cricsheet](https://cricsheet.org) (structured by match)
+
 Includes detailed ball-by-ball records with:
-   -match_id, innings, runs_off_bat, extras, wicket_type, etc.
-Metadata extracted from *_info.csv files includes the match winner.
 
-🧠 First Innings: Final Score Prediction
-Predicts the final total runs a team is likely to score based on current match progress.
+- `match_id`
+- `innings`
+- `runs_off_bat`
+- `extras`
+- `wicket_type`, etc.
 
-✅ Features Used:
-curr_runs: Cumulative runs at any ball
+Metadata extracted from `*_info.csv` files includes the **match winner**.
 
-curr_wickets: Cumulative wickets fallen
+---
 
-overs: Over number (derived from ball count)
+## 🧠 First Innings: Final Score Prediction
 
-⚙️ Model: LSTM
-2 LSTM layers (64, 32 units) with dropout and batch normalization
+> Predicts the final total runs a team is likely to score based on current match progress.
 
-Dense output layer for regression
+### ✅ Features Used
 
-Training Details:
-Input Shape: (samples, 1, 3)
+- `curr_runs`: Cumulative runs at any ball
+- `curr_wickets`: Cumulative wickets fallen
+- `overs`: Over number (derived from ball count)
 
-Scaler: MinMaxScaler()
+### ⚙️ Model: LSTM
 
-Loss: Mean Squared Error (MSE)
+- 2 LSTM layers (64, 32 units) with dropout and batch normalization
+- Dense output layer for regression
 
-MAE: Printed post-evaluation
+### Training Details
 
-Validation: 80/20 train-test split
+- **Input Shape:** (samples, 1, 3)
+- **Scaler:** `MinMaxScaler()`
+- **Loss:** Mean Squared Error (MSE)
+- **Validation:** 80/20 train-test split
 
-📈 Evaluation:
-Final model performance (example):
+### 📈 Evaluation
 
-MSE: ~[value]
+- MSE: ~[value]
+- MAE: ~[value]
 
-MAE: ~[value]
+Inputs from users are dynamically scaled and reshaped for live predictions.
 
-Input from users dynamically scaled and reshaped for live predictions.
+---
 
-🏃‍♂️ Second Innings: Chase Success Prediction
-Predicts the probability of the batting second team winning using cumulative metrics and target score.
+## 🏃‍♂️ Second Innings: Chase Success Prediction
 
-✅ Features Used:
-total_runs_target: Target set by team batting first
+> Predicts the probability of the batting second team winning using cumulative metrics and the first innings target.
 
-curr_runs: Runs scored so far
+### ✅ Features Used
 
-curr_wickets: Wickets lost so far
+- `total_runs_target`: Target set by team batting first
+- `curr_runs`: Runs scored so far
+- `curr_wickets`: Wickets lost so far
+- `overs`: Over count
 
-overs: Over count
+### ⚙️ Model: Dense Neural Network
 
-⚙️ Model: Dense Neural Network
-Architecture: Dense(32) → Dropout → Dense(16) → Dropout → Dense(8) → Sigmoid output
+- Architecture: Dense(32) → Dropout → Dense(16) → Dropout → Dense(8) → Sigmoid
+- Binary classification for chase success
+- Optimized for balanced accuracy and generalization
 
-Binary classification for chase success
+### 📦 Labels
 
-Optimized for balanced accuracy and generalization
+- `is_chase_suc`: 1 if second innings team won, else 0
 
-📦 Labels:
-is_chase_suc: 1 if second innings team won, else 0
+### 📈 Evaluation
 
-📈 Evaluation:
-Accuracy: ~[example: 0.89–0.92 range]
+- Accuracy: ~[e.g., 0.89 – 0.92]
 
-Real-time predictions show live win probability for both teams based on inputs.
+Live predictions show dynamic win probability as the second innings progresses.
 
-🔄 Preprocessing & Engineering
-Merging Info: Match winner mapping from _info.csv files
+---
 
-Cumulative Metrics: Runs & wickets using groupby().cumsum()
+## 🔄 Preprocessing & Feature Engineering
 
-Overs Calculation: cumcount() // 6
+- **Match Winner Merge:** Mapped using `_info.csv` files
+- **Cumulative Stats:** `groupby().cumsum()` for runs and wickets
+- **Overs:** Computed using `cumcount() // 6`
+- **Scaling:** `MinMaxScaler()` used and saved via `pickle`
 
-Model Input Scaling:
+---
 
-Scaler saved using pickle for future use
+## 📁 Files Generated
 
-scaler_first.pkl and scaler_second.pkl respectively
+- `odi_target_predictor_lstm.h5` – LSTM model for innings 1
+- `odi_chase_predictor_new.h5` – Neural network model for innings 2
+- `scaler_first.pkl` – Scaler for first innings model
+- `scaler_second.pkl` – Scaler for second innings model
 
-📁 Files Generated:
-odi_target_predictor_lstm.h5 – LSTM model for innings 1
+---
 
-odi_chase_predictor_new.h5 – Neural network for innings 2
+## 🔮 Future Extensions
 
-scaler_first.pkl – First innings MinMaxScaler
+- Integrate with live APIs (e.g., Cricbuzz, ESPNcricinfo)
+- Include player-level impact metrics (strike rate, economy)
+- Use venue/pitch/toss conditions as features
+- Add uncertainty modeling with probabilistic/ensemble methods
+- Optimize field placement via reinforcement learning
 
-scaler_second.pkl – Second innings MinMaxScaler
-
-🔮 Future Extensions
-Integrate with real-time live match APIs (e.g., Cricbuzz, ESPNcricinfo)
-
-Include player-level impact (strike rate, economy)
-
-Factor in venue conditions, pitch reports, and toss
-
-Model uncertainty using probabilistic outputs or ensembles
-
-Field placement impact analysis using reinforcement learning
+---
