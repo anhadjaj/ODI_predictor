@@ -79,7 +79,7 @@ Inputs from users are dynamically scaled and reshaped for live predictions.
 
 ### 📈 Evaluation
 
-- Accuracy: ~[e.g., 0.89 – 0.92]
+- Accuracy: ~ 82% (chasing model), MAE- 30 (target prediction model)
 
 Live predictions show dynamic win probability as the second innings progresses.
 
